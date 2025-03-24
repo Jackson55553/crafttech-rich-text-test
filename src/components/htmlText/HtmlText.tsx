@@ -8,6 +8,7 @@ const HtmlText = forwardRef(
                 id={`htmltext_${id}`}
                 dangerouslySetInnerHTML={{ __html: html }}
                 style={{
+                    background: "green",
                     position: "fixed",
                     overflow: "hidden",
                     left: "100000px",

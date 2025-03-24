@@ -64,10 +64,14 @@ const Shape = (props: ShapeProps) => {
     return (
         <>
             <Group x={x} y={y} onClick={handleClick} ref={groupRef} draggable>
-                <Rect stroke={"black"} width={width} height={height} />
+                <Rect stroke={"red"} width={width} height={height} />
                 {isEditing && (
                     <Html>
-                        <textarea value={value} onChange={handleInput} />
+                        <textarea
+                            style={{ background: "green" }}
+                            value={value}
+                            onChange={handleInput}
+                        />
                     </Html>
                 )}
             </Group>

@@ -2,13 +2,11 @@ import { tool } from "../../@types/types";
 import { ControlProps } from "../../types/ControlProps";
 
 const Control = ({ tool, setTool }: ControlProps) => {
-    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTool((prev: tool) => {
-            if (typeof e.target.value === typeof tool) {
-                return e.target.value;
-            } else {
-                return prev;
-            }
+    const handleOnChange = (tool: tool) => {
+        setTool((prev) => {
+            if (prev === tool) {
+                return undefined;
+            } else return tool;
         });
     };
 
@@ -24,9 +22,9 @@ const Control = ({ tool, setTool }: ControlProps) => {
                     type="radio"
                     id="cursor"
                     name="control"
-                    value="cursor"
+                    value={"cursor"}
                     checked={tool === "cursor"}
-                    onChange={handleOnChange}
+                    onChange={() => handleOnChange("cursor")}
                 />
                 <label htmlFor="cursor">Взаимодействие</label>
             </div>
@@ -36,9 +34,9 @@ const Control = ({ tool, setTool }: ControlProps) => {
                     type="radio"
                     id="shape"
                     name="control"
-                    value="shape"
+                    value={"shape"}
                     checked={tool === "shape"}
-                    onChange={handleOnChange}
+                    onChange={() => handleOnChange("shape")}
                 />
                 <label htmlFor="shape">Добавление</label>
             </div>
