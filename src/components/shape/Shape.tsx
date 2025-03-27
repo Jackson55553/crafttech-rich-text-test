@@ -1,46 +1,75 @@
 import html2canvas from "html2canvas";
 import Konva from "konva";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import {
+    ChangeEvent,
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 import { Group, Rect } from "react-konva";
 import { Html } from "react-konva-utils";
 import HtmlText from "../htmlText/HtmlText";
 import { ShapeProps } from "../../types/ShapeType";
-import { Image } from "konva/lib/shapes/Image";
+import { canvasCtx } from "../../context/CanvasContext";
 
 const Shape = (props: ShapeProps) => {
-    const { x, y, width, height, tool, html, id, text } = props;
-    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const { x, y, width, height, html, id, text, focused } = props;
+
     const [value, setValue] = useState<string>(text);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
 
     const groupRef = useRef<Konva.Group>(null);
-    const imageRef = useRef<Image | null>(null);
+    const imageRef = useRef<Konva.Image | null>(null);
     const htmlRef = useRef<HTMLDivElement>(null);
 
-    const renderImage = async () => {
+    const renderImage = useCallback(async () => {
+        if (groupRef.current === null) return;
         const htmltext = document.getElementById(`htmltext_${id}`);
+        console.log(htmltext);
+        console.log(groupRef.current?.children[0]);
         if (htmltext) {
             const innerhtml = htmltext.innerHTML;
             if (innerhtml) {
                 const canvas = await html2canvas(htmltext, {
-                    backgroundColor: "rgba(0,0,0,0)",
+                    backgroundColor: groupRef.current?.children[0].attrs.stroke,
+                    width: groupRef.current?.children[0].attrs.width,
+                    height: groupRef.current?.children[0].attrs.height,
                 });
                 const shape = new Konva.Image({
+                    id: `image_id_${id}`,
                     x: 0,
-                    y: height / 2,
+                    y: 0,
                     scaleX: 1 / window.devicePixelRatio,
                     scaleY: 1 / window.devicePixelRatio,
                     image: canvas,
                 });
-                if (!groupRef.current) return;
+                if (imageRef.current?.id() === shape.id()) {
+                    imageRef.current.destroy();
+                }
+
                 groupRef.current.add(shape);
                 imageRef.current = shape;
-            } else return;
+            } else {
+                if (imageRef.current !== null) {
+                    imageRef.current.destroy();
+                }
+            }
         } else return;
-    };
+    }, [id]);
 
     useEffect(() => {
-        renderImage();
-    }, []);
+        console.log("useEffect");
+        if (!isEditing) {
+            console.log("render");
+            renderImage();
+        }
+    }, [isEditing, renderImage, focused]);
+
+    const values = useContext(canvasCtx);
+    if (!values) return;
+    const { tool } = values;
 
     const handleClick = () => {
         if (tool === "shape") {
@@ -58,17 +87,35 @@ const Shape = (props: ShapeProps) => {
     };
 
     const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        if (htmlRef.current) {
+            htmlRef.current.innerHTML = e.target.value;
+        }
         setValue(e.target.value);
     };
 
     return (
         <>
             <Group x={x} y={y} onClick={handleClick} ref={groupRef} draggable>
-                <Rect stroke={"red"} width={width} height={height} />
+                <Rect
+                    stroke={groupRef.current?.children[0].attrs.stroke}
+                    width={width}
+                    height={height}
+                />
                 {isEditing && (
                     <Html>
                         <textarea
-                            style={{ background: "green" }}
+                            style={{
+                                background:
+                                    groupRef.current?.children[0].attrs.stroke,
+                                border: "none",
+                                resize: "none",
+                                width:
+                                    groupRef.current?.children[0].attrs.width -
+                                    4,
+                                height:
+                                    groupRef.current?.children[0].attrs.width -
+                                    4,
+                            }}
                             value={value}
                             onChange={handleInput}
                         />

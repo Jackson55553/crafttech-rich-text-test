@@ -4,18 +4,24 @@ import { HtmlTextProps } from "../../types/HtmlTextProps";
 const HtmlText = forwardRef(
     ({ html, id }: HtmlTextProps, ref: ForwardedRef<HTMLDivElement>) => {
         return (
-            <div
-                id={`htmltext_${id}`}
-                dangerouslySetInnerHTML={{ __html: html }}
-                style={{
-                    background: "green",
-                    position: "fixed",
-                    overflow: "hidden",
-                    left: "100000px",
-                    top: "100000px",
-                }}
-                ref={ref}
-            ></div>
+            <>
+                <div
+                    id={`htmltext_${id}`}
+                    dangerouslySetInnerHTML={{ __html: html }}
+                    style={{
+                        // maxHeight: "100px",
+                        maxWidth: "100px",
+                        background: "green",
+                        position: "fixed",
+                        textWrap: "wrap",
+                        // overflow: "hidden",
+                        left: "1px",
+                        top: "1px",
+                    }}
+                    ref={ref}
+                ></div>
+                {/* <button style={{ width: 10, height: 10 }}></button> */}
+            </>
         );
     }
 );

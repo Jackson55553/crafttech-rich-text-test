@@ -1,6 +1,6 @@
 export type tool = "cursor" | "shape" | undefined;
 
-export type shape = "circle" | "rect" | "star";
+export type shape = "circle" | "rect" | "star" | "triangle";
 
 export interface BaseFigure {
     x: number;

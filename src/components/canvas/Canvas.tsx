@@ -1,14 +1,25 @@
-import { useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Layer, Stage } from "react-konva";
 import Shape from "../shape/Shape";
 import Konva from "konva";
 import { FigureProps } from "../../types/ShapeType";
-import { CanvasProps } from "../../types/CanvasProps";
+import { canvasCtx } from "../../context/CanvasContext";
 
-const Canvas = ({ tool, stageRef }: CanvasProps) => {
+const Canvas = () => {
+    const values = useContext(canvasCtx);
+
     const [figures, setFigures] = useState<FigureProps[]>([]);
+    const [focused, setFocused] = useState<boolean>(false);
+
+    const stageRef = useRef<Konva.Stage>(null);
+
+    if (!values) return;
+
+    const { tool } = values;
 
     const handleOnClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
+        console.log(e.target);
+        setFocused(e.target !== stageRef.current);
         if (tool === "cursor") return;
         const stage = e.target.getStage();
         if (stage === null) return;
@@ -45,7 +56,7 @@ const Canvas = ({ tool, stageRef }: CanvasProps) => {
                             key={i}
                             {...figure}
                             stageRef={stageRef}
-                            tool={tool}
+                            focused={focused}
                         />
                     );
                 })}

@@ -1,0 +1,62 @@
+%container-bg {
+    position: fixed;
+    padding: 4px;
+    border-radius: 5px;
+    box-shadow: 0 0 8px 1px rgba(59, 0, 82, 0.699);
+    gap: 4px;
+}
+
+.container {
+    @extend %container-bg;
+    top: 7px;
+    left: 50%;
+    height: 48px;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.icons__container {
+    @extend %container-bg;
+    color: black;
+    top: 0;
+    left: 96px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    z-index: 102;
+    opacity: 0;
+    overflow: hidden;
+    transition: all ease 0.3s;
+}
+
+.icons__container.active {
+    opacity: 1;
+    width: fit-content;
+}
+
+.btn {
+    height: 40px;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 5px;
+    & svg {
+        color: rgba(176, 3, 245);
+    }
+}
+
+.btn:hover {
+    background-color: rgba(58, 14, 75, 0.2);
+}
+.btn:active,
+.btn.active {
+    background-color: rgba(58, 14, 75, 0.2);
+    & svg {
+        color: rgb(252, 9, 9);
+    }
+}
