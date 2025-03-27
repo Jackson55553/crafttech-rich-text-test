@@ -30,6 +30,7 @@ const Shape = (props: ShapeProps) => {
         console.log(htmltext);
         console.log(groupRef.current?.children[0]);
         if (htmltext) {
+            htmltext.style.wordWrap = "break-word";
             const innerhtml = htmltext.innerHTML;
             if (innerhtml) {
                 const canvas = await html2canvas(htmltext, {
