@@ -1,0 +1,32 @@
+.toolbar_container {
+    height: 40px;
+    width: 200px;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    top: -75px;
+    left: -50px;
+    background-color: rgb(156, 156, 156);
+    border: solid black 1px;
+    border-radius: 7px;
+}
+
+.choose_color_btn {
+    position: relative;
+    box-sizing: border-box;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    border-radius: 50%;
+    &:hover {
+        border: solid 2px black;
+    }
+}
+
+.active_chooseColor_btn {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    border: solid 2px black;
+}

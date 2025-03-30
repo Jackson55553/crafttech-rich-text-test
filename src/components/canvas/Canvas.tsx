@@ -1,15 +1,15 @@
-import { useContext, useRef, useState } from "react";
+import { FC, useContext, useRef, useState } from "react";
 import { Circle, Layer, Stage, Star } from "react-konva";
 import Shape from "../shape/Shape";
 import Konva from "konva";
 import { canvasCtx } from "../../context/CanvasContext";
 import { figure, shape, tool } from "../../@types/types";
 
-const Canvas = () => {
+const Canvas: FC = () => {
     const values = useContext(canvasCtx);
 
     const [figures, setFigures] = useState<figure[]>([]);
-
+    const [isStageClicked, setIsStageClicked] = useState(false);
     const stageRef = useRef<Konva.Stage>(null);
 
     if (!values) return;
@@ -108,17 +108,20 @@ const Canvas = () => {
                         y={figure.y}
                         width={figure.width}
                         height={figure.height}
-                        stroke="black"
                         text="type something"
-                        color="red"
                         id={figure.id}
                         type={"rect"}
+                        isStageClicked={isStageClicked}
                     />
                 );
         }
     };
 
     const handleOnClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
+        if (e.target === e.target.getStage()) {
+            console.log("e.target", e.target);
+            setIsStageClicked(true);
+        }
         if (tool === "cursor") return;
         const stage = e.target.getStage();
         if (stage === null) return;

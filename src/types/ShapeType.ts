@@ -1,7 +1,6 @@
 export interface RectProps extends FigureProps {
     text: string;
-    stroke: string;
-    color: string;
+    isStageClicked: boolean;
 }
 
 export interface FigureProps {

@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { FC, useContext } from "react";
 import { shape, tool } from "../../@types/types";
 import { canvasCtx } from "../../context/CanvasContext";
 import styles from "./style.module.scss";
@@ -9,7 +9,7 @@ import { TbRectangle } from "react-icons/tb";
 import { FaRegStar } from "react-icons/fa";
 import { TbTriangle } from "react-icons/tb";
 
-const Control = () => {
+const Control: FC = () => {
     const values = useContext(canvasCtx);
 
     if (values === null) {

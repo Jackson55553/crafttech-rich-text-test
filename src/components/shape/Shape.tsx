@@ -1,24 +1,35 @@
 import html2canvas from "html2canvas";
 import Konva from "konva";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import {
+    FC,
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 import { Group, Rect } from "react-konva";
 import { RectProps } from "../../types/ShapeType";
 import { canvasCtx } from "../../context/CanvasContext";
-import TextEditor2 from "../../textEditor/TextEditor2";
+import TextEditor2 from "../textEditor/TextEditor2";
 import ReactQuill from "react-quill-new";
 import { ShapeStyle } from "../../types/ShapeStyle";
 
-const Shape = (props: RectProps) => {
-    const { x, y, width, height, id, text } = props;
+const Shape: FC<RectProps> = (props) => {
+    const { x, y, width, height, id, isStageClicked } = props;
     const [isEditing, setIsEditing] = useState<boolean>(false);
 
-    const defaultStyle: ShapeStyle = { width: width, height: height };
+    const defaultStyle: ShapeStyle = {
+        width: width,
+        height: height,
+        background: "red",
+    };
+
     const [shapeStyle, setShapeStyle] = useState<ShapeStyle>(defaultStyle);
 
     const groupRef = useRef<Konva.Group>(null);
     const imageRef = useRef<Konva.Image | null>(null);
 
-    // Чет вщ не понял, стали прокидываться просто, и обозреваться
     const quillRef = useRef<ReactQuill>(null);
     // второй слой, определяет цвет картинки
     const textEditor = useRef<HTMLDivElement>(null);
@@ -30,18 +41,10 @@ const Shape = (props: RectProps) => {
         else return "";
     };
 
-    // смена цвета второго слоя (который идёт на картинку) через функцию
-    const changeColorHtmlImage = (color: string) => {
-        if (color) {
-            if (textEditor.current) {
-                textEditor.current.style.background = color;
-            }
-        }
-    };
-
     const renderImage = useCallback(async () => {
         console.log("renderImage");
         if (groupRef.current === null) return;
+        console.log(groupRef.current);
         if (quillRef.current) {
             // Получаем текст из редактора и убираем знаки переноса строки.
             const innerHtml = getQuillText(quillRef);
@@ -49,16 +52,14 @@ const Shape = (props: RectProps) => {
                 // Получаем ссылку на элемент редактора.
                 const editorDivElement =
                     quillRef.current.editingAreaRef.current;
-
-                if (textEditor.current) {
-                    changeColorHtmlImage("red");
-                }
+                // Текущая картинка
+                const imageRefPrev = imageRef.current;
                 // Передаём firstChild, чтобы избежать отображения редактора текста на картинке.
                 const canvas = await html2canvas(editorDivElement.firstChild, {
                     backgroundColor: textEditor.current?.style.background,
                     width: width,
                     height: textEditor.current?.clientHeight,
-                    useCORS: true,
+                    scale: 1,
                 });
                 const shape = new Konva.Image({
                     id: `image_id_${id}`,
@@ -71,7 +72,7 @@ const Shape = (props: RectProps) => {
                 });
                 // Если редактировали ту же картинку, то предыдущую удаляем и вставляем новую
                 if (imageRef.current?.id() === shape.id()) {
-                    imageRef.current.destroy();
+                    imageRefPrev?.destroy();
                 }
                 groupRef.current.add(shape);
                 imageRef.current = shape;
@@ -84,6 +85,12 @@ const Shape = (props: RectProps) => {
             }
         } else return;
     }, [id, width]);
+
+    const onStageClick = () => {
+        if (isStageClicked) {
+            setIsEditing(false);
+        }
+    };
 
     useEffect(() => {
         console.log("useEffect shape");
@@ -115,21 +122,20 @@ const Shape = (props: RectProps) => {
         <>
             <Group x={x} y={y} onClick={handleClick} ref={groupRef} draggable>
                 <Rect
-                    stroke={"black"}
+                    stroke={shapeStyle.stroke || "black"}
                     strokeWidth={isEditing ? 10 : 2}
                     width={shapeStyle.width}
                     height={shapeStyle.height}
                 />
                 <TextEditor2
-                    id={id}
-                    text={text}
                     htmlRef={textEditor}
                     quillRef={quillRef}
                     groupRef={groupRef}
                     isEditing={isEditing}
-                    width={width}
-                    height={height}
                     renderImage={renderImage}
+                    shapeStyle={shapeStyle}
+                    setShapeStyle={setShapeStyle}
+                    rectProps={props}
                 />
             </Group>
         </>
