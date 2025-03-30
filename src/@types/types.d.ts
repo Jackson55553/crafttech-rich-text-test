@@ -3,6 +3,7 @@ export type tool = "cursor" | "shape" | undefined;
 export type shape = "circle" | "rect" | "star" | "triangle";
 
 export interface BaseFigure {
+    id: string;
     x: number;
     y: number;
     type: shape;
@@ -25,8 +26,14 @@ export interface Star extends BaseFigure {
     outerRadius: number;
     type: "star";
 }
+export interface Triangle extends BaseFigure {
+    numPoints: 3;
+    innerRadius: number;
+    outerRadius: number;
+    type: "triangle";
+}
 
-export type figure = Circle | Rect | Star;
+export type figure = Circle | Rect | Star | Triangle;
 
 export type context = {
     tool: tool;

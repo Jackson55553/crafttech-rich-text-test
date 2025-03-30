@@ -1,42 +1,64 @@
 import html2canvas from "html2canvas";
 import Konva from "konva";
-import {
-    ChangeEvent,
-    useCallback,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Group, Rect } from "react-konva";
-import { Html } from "react-konva-utils";
-import HtmlText from "../htmlText/HtmlText";
-import { ShapeProps } from "../../types/ShapeType";
+import { RectProps } from "../../types/ShapeType";
 import { canvasCtx } from "../../context/CanvasContext";
+import TextEditor2 from "../../textEditor/TextEditor2";
+import ReactQuill from "react-quill-new";
+import { ShapeStyle } from "../../types/ShapeStyle";
 
-const Shape = (props: ShapeProps) => {
-    const { x, y, width, height, html, id, text, focused } = props;
-
-    const [value, setValue] = useState<string>(text);
+const Shape = (props: RectProps) => {
+    const { x, y, width, height, id, text } = props;
     const [isEditing, setIsEditing] = useState<boolean>(false);
+
+    const defaultStyle: ShapeStyle = { width: width, height: height };
+    const [shapeStyle, setShapeStyle] = useState<ShapeStyle>(defaultStyle);
 
     const groupRef = useRef<Konva.Group>(null);
     const imageRef = useRef<Konva.Image | null>(null);
-    const htmlRef = useRef<HTMLDivElement>(null);
+
+    // Чет вщ не понял, стали прокидываться просто, и обозреваться
+    const quillRef = useRef<ReactQuill>(null);
+    // второй слой, определяет цвет картинки
+    const textEditor = useRef<HTMLDivElement>(null);
+
+    // Получаем текст из редактора и убираем знаки переноса строки.
+    const getQuillText = (quillRef: React.RefObject<ReactQuill | null>) => {
+        if (quillRef.current)
+            return quillRef.current.getEditor().getText().replace(/\n/g, "");
+        else return "";
+    };
+
+    // смена цвета второго слоя (который идёт на картинку) через функцию
+    const changeColorHtmlImage = (color: string) => {
+        if (color) {
+            if (textEditor.current) {
+                textEditor.current.style.background = color;
+            }
+        }
+    };
 
     const renderImage = useCallback(async () => {
+        console.log("renderImage");
         if (groupRef.current === null) return;
-        const htmltext = document.getElementById(`htmltext_${id}`);
-        console.log(htmltext);
-        console.log(groupRef.current?.children[0]);
-        if (htmltext) {
-            htmltext.style.wordWrap = "break-word";
-            const innerhtml = htmltext.innerHTML;
-            if (innerhtml) {
-                const canvas = await html2canvas(htmltext, {
-                    backgroundColor: groupRef.current?.children[0].attrs.stroke,
-                    width: groupRef.current?.children[0].attrs.width,
-                    height: groupRef.current?.children[0].attrs.height,
+        if (quillRef.current) {
+            // Получаем текст из редактора и убираем знаки переноса строки.
+            const innerHtml = getQuillText(quillRef);
+            if (innerHtml) {
+                // Получаем ссылку на элемент редактора.
+                const editorDivElement =
+                    quillRef.current.editingAreaRef.current;
+
+                if (textEditor.current) {
+                    changeColorHtmlImage("red");
+                }
+                // Передаём firstChild, чтобы избежать отображения редактора текста на картинке.
+                const canvas = await html2canvas(editorDivElement.firstChild, {
+                    backgroundColor: textEditor.current?.style.background,
+                    width: width,
+                    height: textEditor.current?.clientHeight,
+                    useCORS: true,
                 });
                 const shape = new Konva.Image({
                     id: `image_id_${id}`,
@@ -44,35 +66,37 @@ const Shape = (props: ShapeProps) => {
                     y: 0,
                     scaleX: 1 / window.devicePixelRatio,
                     scaleY: 1 / window.devicePixelRatio,
+                    height: textEditor.current?.clientHeight,
                     image: canvas,
                 });
+                // Если редактировали ту же картинку, то предыдущую удаляем и вставляем новую
                 if (imageRef.current?.id() === shape.id()) {
                     imageRef.current.destroy();
                 }
-
                 groupRef.current.add(shape);
                 imageRef.current = shape;
             } else {
+                // Если пустое значение в редакторе, то удаляем картинку совсем
                 if (imageRef.current !== null) {
                     imageRef.current.destroy();
                 }
+                return;
             }
         } else return;
-    }, [id]);
+    }, [id, width]);
 
     useEffect(() => {
-        console.log("useEffect");
+        console.log("useEffect shape");
         if (!isEditing) {
-            console.log("render");
             renderImage();
         }
-    }, [isEditing, renderImage, focused]);
+    }, [isEditing, renderImage]);
 
     const values = useContext(canvasCtx);
     if (!values) return;
     const { tool } = values;
 
-    const handleClick = () => {
+    const handleClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
         if (tool === "shape") {
             return;
         } else {
@@ -87,45 +111,27 @@ const Shape = (props: ShapeProps) => {
         }
     };
 
-    const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        if (htmlRef.current) {
-            htmlRef.current.innerHTML = e.target.value;
-        }
-        setValue(e.target.value);
-    };
-
     return (
         <>
             <Group x={x} y={y} onClick={handleClick} ref={groupRef} draggable>
                 <Rect
-                    stroke={groupRef.current?.children[0].attrs.stroke}
+                    stroke={"black"}
+                    strokeWidth={isEditing ? 10 : 2}
+                    width={shapeStyle.width}
+                    height={shapeStyle.height}
+                />
+                <TextEditor2
+                    id={id}
+                    text={text}
+                    htmlRef={textEditor}
+                    quillRef={quillRef}
+                    groupRef={groupRef}
+                    isEditing={isEditing}
                     width={width}
                     height={height}
+                    renderImage={renderImage}
                 />
-                {isEditing && (
-                    <Html>
-                        <textarea
-                            style={{
-                                background:
-                                    groupRef.current?.children[0].attrs.stroke,
-                                border: "none",
-                                resize: "none",
-                                width:
-                                    groupRef.current?.children[0].attrs.width -
-                                    4,
-                                height:
-                                    groupRef.current?.children[0].attrs.width -
-                                    4,
-                            }}
-                            value={value}
-                            onChange={handleInput}
-                        />
-                    </Html>
-                )}
             </Group>
-            <Html>
-                <HtmlText ref={htmlRef} html={html} id={id} />
-            </Html>
         </>
     );
 };

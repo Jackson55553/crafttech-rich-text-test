@@ -2,8 +2,6 @@ import { Stage, Layer, Text, Transformer } from "react-konva";
 import { Html } from "react-konva-utils";
 import { useEffect, useRef, useState, useCallback } from "react";
 
-Konva._fixTextRendering = true;
-
 const TextEditor = ({ textNode, onClose, onChange }) => {
     const textareaRef = useRef(null);
 
@@ -110,7 +108,6 @@ const TextEditor = ({ textNode, onClose, onChange }) => {
 
 const EditableText = () => {
     const [text, setText] = useState("Some text here");
-    const [isEditing, setIsEditing] = useState(false);
     const [textWidth, setTextWidth] = useState(200);
     const textRef = useRef();
     const trRef = useRef();

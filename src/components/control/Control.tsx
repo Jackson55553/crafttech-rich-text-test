@@ -4,10 +4,10 @@ import { canvasCtx } from "../../context/CanvasContext";
 import styles from "./style.module.scss";
 import { FaMousePointer } from "react-icons/fa";
 import { RiShapesFill } from "react-icons/ri";
-// import { GoCircle } from "react-icons/go";
+import { GoCircle } from "react-icons/go";
 import { TbRectangle } from "react-icons/tb";
-// import { FaRegStar } from "react-icons/fa";
-// import { TbTriangle } from "react-icons/tb";
+import { FaRegStar } from "react-icons/fa";
+import { TbTriangle } from "react-icons/tb";
 
 const Control = () => {
     const values = useContext(canvasCtx);
@@ -55,14 +55,14 @@ const Control = () => {
                         tool === "shape" ? styles.active : ""
                     }`}
                 >
-                    {/* <div
+                    <div
                         className={`${styles.btn} ${
                             shape === "circle" ? styles.active : ""
                         }`}
                         onClick={() => handleClickShape("circle")}
                     >
                         <GoCircle />
-                    </div> */}
+                    </div>
                     <div
                         className={`${styles.btn} ${
                             shape === "rect" ? styles.active : ""
@@ -71,7 +71,7 @@ const Control = () => {
                     >
                         <TbRectangle />
                     </div>
-                    {/* <div
+                    <div
                         className={`${styles.btn} ${
                             shape === "star" ? styles.active : ""
                         }`}
@@ -86,7 +86,7 @@ const Control = () => {
                         onClick={() => handleClickShape("triangle")}
                     >
                         <TbTriangle />
-                    </div> */}
+                    </div>
                 </div>
             )}
         </div>
