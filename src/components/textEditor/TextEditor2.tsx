@@ -1,32 +1,23 @@
-import { Group } from "konva/lib/Group";
 import { FC, useCallback, useRef, useState } from "react";
 import styles from "./style.module.scss";
 import { Html } from "react-konva-utils";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.bubble.css";
-import { ShapeStyle } from "../../types/ShapeStyle";
 import ShapeStyleEditor from "../shapeStyleEditor/ShapeStyleEditor";
-import { RectProps } from "../../types/ShapeType";
+import { TextEditorProps } from "../../types/TextEditorProps";
 
-const TextEditor2: FC<any> = ({
-    quillRef,
-    htmlRef,
-    isEditing,
-    groupRef,
-    renderImage,
-    shapeStyle,
-    setShapeStyle,
-    rectProps,
-}: {
-    quillRef: React.RefObject<ReactQuill | null>;
-    htmlRef: React.RefObject<HTMLDivElement | null>;
-    isEditing: boolean;
-    groupRef: React.RefObject<Group | null>;
-    renderImage: () => Promise<void>;
-    shapeStyle: ShapeStyle;
-    setShapeStyle: React.Dispatch<React.SetStateAction<ShapeStyle>>;
-    rectProps: RectProps;
-}) => {
+const TextEditor2: FC<TextEditorProps> = (props: TextEditorProps) => {
+    const {
+        quillRef,
+        htmlRef,
+        isEditing,
+        groupRef,
+        renderImage,
+        shapeStyle,
+        setShapeStyle,
+        rectProps,
+    } = props;
+
     const { id, text, height } = rectProps;
 
     const [thisValue, setThisValue] = useState(text);

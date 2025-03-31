@@ -1,28 +1,15 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { ShapeStyle } from "../../types/ShapeStyle";
-import ReactQuill from "react-quill-new";
+import { FC, useCallback, useState } from "react";
 import styles from "./style.module.scss";
 import ColorToolbar from "./ColorToolbar/ColorToolbar";
+import { ShapeStyleProps } from "../../types/ShapeStyleProps";
 
-const ShapeStyleEditor = ({
-    setShapeStyle,
-    quillRef,
-    shapeStyle,
-}: {
-    quillRef: React.RefObject<ReactQuill | null>;
-    shapeStyle: ShapeStyle;
-    setShapeStyle: React.Dispatch<React.SetStateAction<ShapeStyle>>;
-}) => {
+const ShapeStyleEditor: FC<ShapeStyleProps> = (props: ShapeStyleProps) => {
+    const { setShapeStyle, quillRef, shapeStyle } = props;
+
     const [isBackgroundColorEdited, setIsBackgroundColorEdited] =
         useState(false);
     const [isStrokeColorEdited, setIsStrokeColorEdited] = useState(false);
     const [isTextColorEdited, setIsTextColorEdited] = useState(false);
-
-    const btnCortege: [boolean, boolean, boolean] = [
-        isBackgroundColorEdited,
-        isStrokeColorEdited,
-        isTextColorEdited,
-    ];
 
     const setBackgroundColor = useCallback(
         (color: string) => {

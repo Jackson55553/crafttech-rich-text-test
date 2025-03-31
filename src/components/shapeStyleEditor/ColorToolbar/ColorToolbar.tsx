@@ -1,19 +1,9 @@
-import React, { FC, useCallback } from "react";
-import ReactQuill from "react-quill-new";
-import { ShapeStyle } from "../../../types/ShapeStyle";
+import { FC } from "react";
 import styles from "./style.module.scss";
+import { ColorToolbarProps } from "../../../types/ColorToolbarProps";
 
-const ColorToolbar: FC<any> = ({
-    quillRef,
-    shapeStyle,
-    setColor,
-    text,
-}: {
-    quillRef: React.RefObject<ReactQuill | null>;
-    shapeStyle: ShapeStyle;
-    setColor: (color: string) => void;
-    text: string;
-}) => {
+const ColorToolbar: FC<ColorToolbarProps> = (props: ColorToolbarProps) => {
+    const { quillRef, shapeStyle, setColor, text } = props;
     const colors = [
         "red",
         "blue",
