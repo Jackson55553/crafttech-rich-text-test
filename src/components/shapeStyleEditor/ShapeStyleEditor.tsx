@@ -4,7 +4,7 @@ import ColorToolbar from "./ColorToolbar/ColorToolbar";
 import { ShapeStyleProps } from "../../types/ShapeStyleProps";
 
 const ShapeStyleEditor: FC<ShapeStyleProps> = (props: ShapeStyleProps) => {
-    const { setShapeStyle, quillRef, shapeStyle } = props;
+    const { setShapeStyle, quillRef, shapeStyle, text } = props;
 
     const [isBackgroundColorEdited, setIsBackgroundColorEdited] =
         useState(false);
@@ -75,6 +75,7 @@ const ShapeStyleEditor: FC<ShapeStyleProps> = (props: ShapeStyleProps) => {
                         shapeStyle={shapeStyle}
                         quillRef={quillRef}
                         setColor={setBackgroundColor}
+                        text={text}
                     />
                 )}
             </div>
@@ -99,6 +100,7 @@ const ShapeStyleEditor: FC<ShapeStyleProps> = (props: ShapeStyleProps) => {
                         shapeStyle={shapeStyle}
                         quillRef={quillRef}
                         setColor={setBorderColor}
+                        text={text}
                     />
                 )}
             </div>
@@ -122,6 +124,7 @@ const ShapeStyleEditor: FC<ShapeStyleProps> = (props: ShapeStyleProps) => {
                         shapeStyle={shapeStyle}
                         quillRef={quillRef}
                         setColor={setTextColor}
+                        text={text}
                     />
                 )}
             </div>

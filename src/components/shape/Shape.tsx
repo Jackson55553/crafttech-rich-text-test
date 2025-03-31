@@ -16,7 +16,7 @@ import ReactQuill from "react-quill-new";
 import { ShapeStyle } from "../../types/ShapeStyle";
 
 const Shape: FC<RectProps> = (props) => {
-    const { x, y, width, height, id, isStageClicked } = props;
+    const { x, y, width, height, id, stageRef } = props;
     const [isEditing, setIsEditing] = useState<boolean>(false);
 
     const defaultStyle: ShapeStyle = {
@@ -42,9 +42,7 @@ const Shape: FC<RectProps> = (props) => {
     };
 
     const renderImage = useCallback(async () => {
-        console.log("renderImage");
         if (groupRef.current === null) return;
-        console.log(groupRef.current);
         if (quillRef.current) {
             // Получаем текст из редактора и убираем знаки переноса строки.
             const innerHtml = getQuillText(quillRef);
@@ -70,6 +68,7 @@ const Shape: FC<RectProps> = (props) => {
                     height: textEditor.current?.clientHeight,
                     image: canvas,
                 });
+                shape.show()
                 // Если редактировали ту же картинку, то предыдущую удаляем и вставляем новую
                 if (imageRef.current?.id() === shape.id()) {
                     imageRefPrev?.destroy();
@@ -86,35 +85,39 @@ const Shape: FC<RectProps> = (props) => {
         } else return;
     }, [id, width]);
 
-    const onStageClick = () => {
-        if (isStageClicked) {
-            setIsEditing(false);
-        }
-    };
+    
+    const onStageClick = useCallback((e: Konva.KonvaEventObject<MouseEvent>) => {
+            if(e.target === stageRef.current?.getStage()){
+                setIsEditing(false)
+            }
+    }, [stageRef])
+
 
     useEffect(() => {
-        console.log("useEffect shape");
         if (!isEditing) {
+            stageRef.current?.off('click', onStageClick)
             renderImage();
         }
-    }, [isEditing, renderImage]);
+
+    }, [isEditing, renderImage, stageRef, onStageClick]);
 
     const values = useContext(canvasCtx);
     if (!values) return;
     const { tool } = values;
 
-    const handleClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const handleClick = () => {
+        stageRef.current?.on('click', onStageClick)
         if (tool === "shape") {
             return;
         } else {
             setIsEditing((prev) => !prev);
-            if (imageRef.current) {
-                if (isEditing) {
-                    imageRef.current.show();
-                } else {
-                    imageRef.current.hide();
-                }
-            } else return;
+            // if (imageRef.current) {
+            //     if (isEditing) {
+            //         imageRef.current.hide();
+            //     } else {
+            //         imageRef.current.show();
+            //     }
+            // } else return;
         }
     };
 
@@ -124,6 +127,7 @@ const Shape: FC<RectProps> = (props) => {
                 <Rect
                     stroke={shapeStyle.stroke || "black"}
                     strokeWidth={isEditing ? 10 : 2}
+                    fill={shapeStyle.background}
                     width={shapeStyle.width}
                     height={shapeStyle.height}
                 />

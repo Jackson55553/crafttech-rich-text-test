@@ -3,7 +3,7 @@ import styles from "./style.module.scss";
 import { ColorToolbarProps } from "../../../types/ColorToolbarProps";
 
 const ColorToolbar: FC<ColorToolbarProps> = (props: ColorToolbarProps) => {
-    const { quillRef, shapeStyle, setColor, text } = props;
+    const { quillRef, shapeStyle, setColor } = props;
     const colors = [
         "red",
         "blue",

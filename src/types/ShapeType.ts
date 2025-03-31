@@ -1,6 +1,8 @@
+import { Stage } from "konva/lib/Stage";
+
 export interface RectProps extends FigureProps {
     text: string;
-    isStageClicked: boolean;
+    stageRef: React.RefObject<Stage | null>
 }
 
 export interface FigureProps {

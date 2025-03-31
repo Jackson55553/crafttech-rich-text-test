@@ -59,10 +59,6 @@ const TextEditor2: FC<TextEditorProps> = (props: TextEditorProps) => {
         const textAreaHeight = quillRef.current.getEditingArea().clientHeight;
         const shapeHeight = groupRef.current.children[0].height();
 
-        if (textAreaHeight !== shapeHeight && shapeHeight > height) {
-            console.log("render from editor");
-            renderImage();
-        }
         if (textAreaHeight > shapeHeight && shapeHeight !== textAreaHeight) {
             groupRef.current?.children[0].height(textAreaHeight);
             setImageHeight(textAreaHeight);
@@ -74,6 +70,9 @@ const TextEditor2: FC<TextEditorProps> = (props: TextEditorProps) => {
                 groupRef.current.children[0].height(textAreaHeight);
                 setImageHeight(textAreaHeight);
             }
+        }
+        if (textAreaHeight !== shapeHeight && shapeHeight > height) {
+            renderImage();
         }
     }, [groupRef, quillRef, height, renderImage, setImageHeight]);
 
@@ -138,6 +137,7 @@ const TextEditor2: FC<TextEditorProps> = (props: TextEditorProps) => {
                         quillRef={quillRef}
                         shapeStyle={shapeStyle}
                         setShapeStyle={setShapeStyle}
+                        text={text}
                     />
                 </div>
             )}

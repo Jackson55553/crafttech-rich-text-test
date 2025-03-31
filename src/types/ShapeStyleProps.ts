@@ -5,4 +5,5 @@ export type ShapeStyleProps = {
     quillRef: React.RefObject<ReactQuill | null>;
     shapeStyle: ShapeStyle;
     setShapeStyle: React.Dispatch<React.SetStateAction<ShapeStyle>>;
+    text:string
 };

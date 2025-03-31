@@ -9,7 +9,7 @@ const Canvas: FC = () => {
     const values = useContext(canvasCtx);
 
     const [figures, setFigures] = useState<figure[]>([]);
-    const [isStageClicked, setIsStageClicked] = useState(false);
+
     const stageRef = useRef<Konva.Stage>(null);
 
     if (!values) return;
@@ -110,19 +110,15 @@ const Canvas: FC = () => {
                         height={figure.height}
                         text="type something"
                         id={figure.id}
-                        type={"rect"}
-                        isStageClicked={isStageClicked}
-                    />
+                        type={"rect"}                    
+                        stageRef={stageRef}
+                        />
                 );
         }
     };
 
     const handleOnClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
-        if (e.target === e.target.getStage()) {
-            console.log("e.target", e.target);
-            setIsStageClicked(true);
-        }
-        if (tool === "cursor") return;
+        if (tool === "cursor" ) return;
         const stage = e.target.getStage();
         if (stage === null) return;
         const stageOffset = stage.absolutePosition();
